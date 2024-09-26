@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Simple Usage</title>
+    <link rel="stylesheet" href="index.css">
+    <template id="wrap">
+        <article class="result">
+            <h3 class="result__name"></h3>
+            <section class='result__body'>
+            </section>
+        </article>
+    </template>
+</head>
+<body>
+    <input type="text" placeholder="search" id="search" />
+    <button id="btn">search</button>
+    <div id="list"></div>
+
+    <script>
+        const [template, list] = document.querySelectorAll('#wrap, #list')
+        const btn = document.querySelector('#btn')
+        const search = document.querySelector('#search')
+
+        function appendList(data) {
+            const temp = []
+
+            data.forEach((item) => {
+                const title = item.name
+                const body = `type: ${item.type} / breed: ${item.breed} / number: ${item.index}`
+                const  fragment = new DocumentFragment()
+
+                const element = template.content.cloneNode(true).firstElementChild;
+                const [reusltName, resultBody] = element.querySelectorAll('.result__name, .result__body');
+                [reusltName.textContent, resultBody.textContent] = [title, body];
+
+                fragment.appendChild(element)
+                temp.push(fragment)
+            })
+            
+            list.replaceChildren(...temp)
+            btn.disabled = false;
+            btn.innerText = 'search';
+        }
+
+        btn.addEventListener('click', async () => {
+            btn.disabled = true
+            btn.innerText = 'loading'
+
+            const res = await fetch(`/search/${encodeURIComponent(search.value)}`)
+            const data = await res.json()
+
+            appendList(data)
+        })
+
+
+    </script>
+</body>
+</html>
