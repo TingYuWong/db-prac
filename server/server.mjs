@@ -4,7 +4,7 @@ import db from './connection.mjs';
 const PORT = 3000;
 const app = express();
 
-app.use(express.static('../static'));
+app.use(express.static('./static'));
 
 app.get('/search/:query', async (req, res) => {
   let collection = db.collection('pets');
